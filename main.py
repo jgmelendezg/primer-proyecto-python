@@ -1,13 +1,15 @@
 import json
 import os
+# Importamos colorama
+from colorama import Fore, Style, init
 
-# --- LÓGICA DE NEGOCIO ---
+# Inicializamos colorama (autoreset=True hace que el color vuelva a la normalidad tras cada print)
+init(autoreset=True)
 
 def es_mayor_de_edad(edad: int) -> bool:
     return edad >= 18
 
 def cargar_datos(filename: str = "usuarios.json") -> list:
-    """Lee el archivo y retorna la lista de usuarios."""
     if not os.path.exists(filename):
         return []
     with open(filename, "r", encoding="utf-8") as f:
@@ -17,55 +19,46 @@ def cargar_datos(filename: str = "usuarios.json") -> list:
             return []
 
 def guardar_datos(usuarios: list, filename: str = "usuarios.json"):
-    """Guarda la lista completa en el JSON."""
     with open(filename, "w", encoding="utf-8") as f:
         json.dump(usuarios, f, indent=4, ensure_ascii=False)
 
-# --- NUEVAS FUNCIONES CRUD ---
+# --- CRUD CON COLORES ---
 
 def buscar_usuario():
-    """Busca usuarios por coincidencia de nombre."""
-    query = input("🔍 Introduce el nombre a buscar: ").strip().lower()
+    query = input(f"{Fore.CYAN}🔍 Introduce el nombre a buscar: ").strip().lower()
     usuarios = cargar_datos()
-    
-    # List comprehension: Una forma muy 'Pythonic' y pro de filtrar
     resultados = [u for u in usuarios if query in u["nombre"].lower()]
     
     if not resultados:
-        print(f"\n❌ No se encontraron resultados para: '{query}'")
+        print(f"\n{Fore.RED}❌ No se encontraron resultados para: '{query}'")
     else:
-        print(f"\n✅ Se encontraron {len(resultados)} coincidencias:")
+        print(f"\n{Fore.GREEN}✅ Se encontraron {len(resultados)} coincidencias:")
         for u in resultados:
-            print(f"- {u['nombre']} ({u['edad']} años)")
+            print(f"{Fore.YELLOW}- {u['nombre']} {Fore.WHITE}({u['edad']} años)")
 
 def borrar_usuario():
-    """Elimina un usuario por su nombre exacto."""
-    nombre_a_borrar = input("🗑️ Nombre exacto del usuario a eliminar: ").strip()
+    nombre_a_borrar = input(f"{Fore.CYAN}🗑️ Nombre exacto del usuario a eliminar: ").strip()
     usuarios = cargar_datos()
-    
-    # Creamos una nueva lista EXCLUYENDO al usuario (así se borra en Python)
     nueva_lista = [u for u in usuarios if u["nombre"] != nombre_a_borrar]
     
     if len(nueva_lista) == len(usuarios):
-        print(f"\n⚠️ No se encontró a '{nombre_a_borrar}'. Nada que borrar.")
+        print(f"\n{Fore.YELLOW}⚠️ No se encontró a '{nombre_a_borrar}'. Nada que borrar.")
     else:
         guardar_datos(nueva_lista)
-        print(f"\n✨ Usuario '{nombre_a_borrar}' eliminado correctamente.")
-
-# --- INTERFAZ DE USUARIO ---
+        print(f"\n{Fore.GREEN}✨ Usuario '{nombre_a_borrar}' eliminado correctamente.")
 
 def menu_principal():
     while True:
-        print("\n" + "═"*30)
-        print(" 🚀 SISTEMA DE GESTIÓN CRUD")
-        print("═"*30)
-        print("1. Registrar usuario")
-        print("2. Listar todos")
-        print("3. Buscar usuario")
-        print("4. Borrar usuario")
-        print("5. Salir")
+        print("\n" + Fore.BLUE + "═"*30)
+        print(Fore.BLUE + Style.BRIGHT + " 🚀 SISTEMA DE GESTIÓN CRUD")
+        print(Fore.BLUE + "═"*30)
+        print(f"{Fore.WHITE}1. Registrar usuario")
+        print(f"{Fore.WHITE}2. Listar todos")
+        print(f"{Fore.WHITE}3. Buscar usuario")
+        print(f"{Fore.WHITE}4. Borrar usuario")
+        print(f"{Fore.RED}5. Salir")
         
-        opcion = input("\nSelecciona (1-5): ").strip()
+        opcion = input(f"\n{Fore.YELLOW}Selecciona (1-5): ").strip()
 
         match opcion:
             case "1":
@@ -76,21 +69,21 @@ def menu_principal():
                     usuarios = cargar_datos()
                     usuarios.append(user)
                     guardar_datos(usuarios)
-                    print("✅ Guardado.")
+                    print(f"{Fore.GREEN}✅ Guardado correctamente.")
                 except ValueError:
-                    print("❌ Edad inválida.")
+                    print(f"{Fore.RED}❌ Error: Edad inválida.")
             case "2":
-                # Aquí podrías reusar tu función de listar anterior
+                print(f"\n{Fore.MAGENTA}--- LISTA DE USUARIOS ---")
                 print(cargar_datos()) 
             case "3":
                 buscar_usuario()
             case "4":
                 borrar_usuario()
             case "5":
-                print("👋 ¡Adiós!")
+                print(f"{Fore.CYAN}👋 ¡Adiós!")
                 break
             case _:
-                print("⚠️ Opción inválida.")
+                print(f"{Fore.RED}⚠️ Opción inválida.")
 
 if __name__ == "__main__":
     menu_principal()
