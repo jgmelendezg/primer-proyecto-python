@@ -1,0 +1,22 @@
+[
+    {
+        "nombre": "jose",
+        "edad": 99,
+        "es_adulto": true
+    },
+    {
+        "nombre": "camio",
+        "edad": 23,
+        "es_adulto": true
+    },
+    {
+        "nombre": "gaby",
+        "edad": 15,
+        "es_adulto": false
+    },
+    {
+        "nombre": "yazmin",
+        "edad": 59,
+        "es_adulto": true
+    }
+]
